@@ -1,0 +1,48 @@
+# ============================================================
+# Завдання 5: Автоматичний HTML-звіт
+# ============================================================
+# Генерує HTML-звіт тестування за допомогою pytest-html
+# і публікує його як артефакт GitHub Actions.
+
+name: "5 — HTML Test Report"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  report:
+    name: Generate HTML Report
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Отримати код репозиторію
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Встановити Python
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 3. Встановити залежності
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Запустити тести та згенерувати HTML-звіт
+      - name: Run tests and generate HTML report
+        run: |
+          python -m pytest tests/ -v --html=report.html --self-contained-html
+
+      # 5. Завантажити HTML-звіт як артефакт
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-test-report
+          path: report.html

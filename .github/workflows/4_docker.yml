@@ -1,0 +1,37 @@
+# ============================================================
+# Завдання 4: Збірка Docker-контейнера
+# ============================================================
+# Будує Docker-образ і запускає тести всередині контейнера.
+
+name: "4 — Docker Build"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  docker:
+    name: Build & Run Docker
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Отримати код репозиторію
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Збудувати Docker-образ
+      - name: Build Docker image
+        run: |
+          docker build -t pnid-app:latest .
+
+      # 3. Запустити контейнер (тести виконуються як CMD)
+      - name: Run tests in Docker container
+        run: |
+          docker run --rm pnid-app:latest
+
+      # 4. Показати інформацію про образ
+      - name: Show Docker image info
+        run: |
+          docker images pnid-app:latest

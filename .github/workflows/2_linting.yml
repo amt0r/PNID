@@ -1,0 +1,40 @@
+# ============================================================
+# Завдання 2: Перевірка стилю коду (Linting)
+# ============================================================
+# Запускає flake8 для аналізу стилю Python-коду.
+
+name: "2 — Code Linting"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Flake8 Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Отримати код репозиторію
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Встановити Python
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 3. Встановити flake8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      # 4. Запустити перевірку стилю
+      - name: Run flake8 linting
+        run: |
+          echo "=== Перевірка стилю коду ==="
+          flake8 app/ tests/ --count --show-source --statistics --max-line-length=120

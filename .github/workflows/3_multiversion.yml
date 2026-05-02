@@ -1,0 +1,49 @@
+# ============================================================
+# Завдання 3: Мультиверсійне тестування
+# ============================================================
+# Запускає тести на кількох версіях Python (3.9, 3.10, 3.11, 3.12)
+# за допомогою стратегії matrix.
+
+name: "3 — Multi-version Testing"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: "Python ${{ matrix.python-version }}"
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+      fail-fast: false          # продовжувати інші версії, навіть якщо одна впала
+
+    steps:
+      # 1. Отримати код репозиторію
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Встановити відповідну версію Python
+      - name: "Set up Python ${{ matrix.python-version }}"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "${{ matrix.python-version }}"
+
+      # 3. Встановити залежності
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Показати версію Python
+      - name: Show Python version
+        run: python --version
+
+      # 5. Запустити тести
+      - name: Run tests
+        run: |
+          python -m pytest tests/ -v --tb=short
